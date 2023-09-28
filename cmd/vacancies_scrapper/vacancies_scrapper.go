@@ -95,32 +95,4 @@ func main() {
 	log.Infof("Cache saved successfully to file %s", scrapperConfig.CacheStateFile.String())
 
 	log.Info("Bye 👋")
-
-	//resp, err := http.Get("https://aviasales.ru/about/vacancies")
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
-	//
-	//defer func() {
-	//	_ = resp.Body.Close()
-	//}()
-	//
-	//body, err := io.ReadAll(resp.Body)
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
-	//
-	//vacanciesPage, err := htmlquery.Parse(bytes.NewReader(body))
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
-	//
-	//vacancies, err := htmlquery.QueryAll(vacanciesPage, "//a[@class='vacancies_vacancy']")
-	//for _, vacancy := range vacancies {
-	//	vacancyLink := htmlquery.FindOne(vacancy, "//a")
-	//	vacancyLinkHref := htmlquery.SelectAttr(vacancyLink, "href")
-	//	vacancyLinkText := htmlquery.InnerText(vacancyLink)
-	//	println(vacancyLinkHref)
-	//	println(vacancyLinkText)
-	//}
 }
