@@ -139,9 +139,6 @@ func (w *worker) Start(ctx context.Context) {
 		// Done
 		log.WithFields(log.Fields{"timestamp": time.Now().Format("02.01.2006 15:04:05")}).Info("Scrapping done")
 
-		w.cache.Delete("3295306")
-		w.cache.Delete("3455633")
-
 		select {
 		case <-ctx.Done():
 			ticker.Stop()
