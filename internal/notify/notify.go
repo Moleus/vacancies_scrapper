@@ -154,7 +154,7 @@ func (n *notifier) WelcomeMessage(ctx context.Context, vacanciesCount int) error
 	body := slack.NewSectionBlock(
 		&slack.TextBlockObject{
 			Type: slack.MarkdownType,
-			Text: fmt.Sprintf("Я бот Vacancies Sniffer и я буду присылать тебе уведомления о новых вакансиях с сайта aviasales.ru :aviasales_times:\n\nСейчас на сайте есть %d вакансий, но я буду следить только за новыми :hug:\nЕсли ты хочешь посмотреть все вакансии что есть сейчас, жми кнопку :point_down:", vacanciesCount),
+			Text: fmt.Sprintf("Я бот Vacancies Sniffer и я буду присылать тебе уведомления о новых вакансиях с сайта aviasales.ru :aviasales_times:\n\nСейчас на сайте есть %d вакансий, но я буду следить только за новыми :hug:\n\nЕсли ты хочешь посмотреть все вакансии что есть сейчас, жми кнопку :point_down:", vacanciesCount),
 		},
 		nil,
 		nil,
