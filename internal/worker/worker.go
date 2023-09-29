@@ -136,6 +136,18 @@ func (w *worker) Start(ctx context.Context) {
 			}
 		}
 
+		// Save cache to file
+		err = w.cache.SaveFile(w.config.CacheStateFile.String())
+		if err != nil {
+			log.WithFields(log.Fields{
+				"error": err,
+			}).Error("Saving cache...")
+		} else {
+			log.WithFields(log.Fields{
+				"file": w.config.CacheStateFile.String(),
+			}).Info("Cache saved successfully")
+		}
+
 		// Done
 		log.WithFields(log.Fields{"timestamp": time.Now().Format("02.01.2006 15:04:05")}).Info("Scrapping done")
 
