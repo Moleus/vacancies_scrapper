@@ -28,8 +28,8 @@ type Configuration struct {
 	ScrapeRequestTimeout time.Duration  `env:"SCRAPE_REQUEST_TIMEOUT" envDefault:"5s"`
 	ScrapeDomain         string         `env:"SCRAPE_DOMAIN,required"`
 	ScrapeUrl            string         `env:"SCRAPE_URL,required"`
-	SlackWebhook         string         `env:"SLACK_WEBHOOK,required"`
-	SlackMaxRetry        int            `env:"SLACK_MAX_RETRY" envDefault:"15"`
+  TelegramToken        string         `env:"TELEGRAM_TOKEN,required"`
+  TelegramChatId       int64          `env:"TELEGRAM_CHAT_ID,required"`
 }
 
 type cacheStateFile string

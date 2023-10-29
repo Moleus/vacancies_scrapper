@@ -104,7 +104,7 @@ func (w *worker) Start(ctx context.Context) {
 		w.removeDeletedVacancies(ctx, vacancies)
 
 		// Send new vacancies to Slack
-		notifier := notify.New(w.config)
+		notifier := notify.NewTg(w.config)
 
 		if firstRun.(bool) {
 			// Send welcome message

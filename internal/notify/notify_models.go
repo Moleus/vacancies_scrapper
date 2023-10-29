@@ -26,6 +26,10 @@ type notifier struct {
 	config configuration.Configuration
 }
 
+type tg_notifier struct {
+  config configuration.Configuration
+}
+
 type Notifier interface {
 	Notify(ctx context.Context, vacancies []types.VacancyInfo) error
 	WelcomeMessage(ctx context.Context, vacanciesCount int) error
