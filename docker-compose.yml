@@ -1,0 +1,12 @@
+version: '3.7'
+
+services:
+  vacancies-notifier:
+    build: .
+    image: vacancies-notifier:local
+    container_name: vacancies-notifier
+    restart: unless-stopped
+    env_file: ../.env
+    volumes:
+      - ./cache:/cache/
+
