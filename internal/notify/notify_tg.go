@@ -48,7 +48,7 @@ func (n *tg_notifier) Notify(ctx context.Context, vacancies []types.VacancyInfo)
       log.Infof("Authorized on account %s", bot.Self.UserName)
       msgContent := fmt.Sprintf("%s `%s`\n%s %s\nОписание вакансии: %s", vacancy.TeamIcon, vacancy.Name, vacancy.RemoteIcon, vacancy.Team, vacancy.Link)
       msg := tgbotapi.NewMessage(n.config.TelegramChatId, msgContent)
-      msg.ParseMode = "markdown"
+      msg.ParseMode = tgbotapi.ModeMarkdown
       _, err = bot.Send(msg)
       if err != nil {
         log.WithFields(log.Fields{
@@ -73,7 +73,7 @@ func (n *tg_notifier) WelcomeMessage(ctx context.Context, vacanciesCount int) er
   bot.Debug = true
   log.Infof("Authorized on account %s", bot.Self.UserName)
   msg := tgbotapi.NewMessage(n.config.TelegramChatId, msgContent)
-  msg.ParseMode = "markdown"
+  msg.ParseMode = tgbotapi.ModeMarkdown
 
   // add button
   keyboard := tgbotapi.NewInlineKeyboardMarkup(
