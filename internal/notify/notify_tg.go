@@ -22,7 +22,8 @@ import (
 
 	"github.com/Ahton89/vacancies_scrapper/internal/configuration"
 	"github.com/Ahton89/vacancies_scrapper/internal/worker/types"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	telego "github.com/mymmrac/telego"
+  tu "github.com/mymmrac/telego/telegoutil"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -39,17 +40,22 @@ func (n *tg_notifier) Notify(ctx context.Context, vacancies []types.VacancyInfo)
       return ctx.Err()
     default:
       // notify telegram
-      bot, err := tgbotapi.NewBotAPI(n.config.TelegramToken)
+      bot, err := telego.NewBot(n.config.TelegramToken, telego.WithDefaultDebugLogger())
       if err != nil {
         // log that we failed to init telegram bot
         log.Fatal(err)
       }
-      bot.Debug = true
-      log.Infof("Authorized on account %s", bot.Self.UserName)
+      botName, err := bot.GetMyName(&telego.GetMyNameParams{})
+      if err != nil {
+        log.Fatal(err)
+      }
+      log.Infof("Authorized on account %s", botName.Name)
       msgContent := fmt.Sprintf("%s `%s`\n%s %s\nОписание вакансии: %s", vacancy.TeamIcon, vacancy.Name, vacancy.RemoteIcon, vacancy.Team, vacancy.Link)
-      msg := tgbotapi.NewMessage(n.config.TelegramChatId, msgContent)
-      msg.ParseMode = tgbotapi.ModeMarkdownV2
-      _, err = bot.Send(msg)
+      msg, err := bot.SendMessage(&telego.SendMessageParams{
+        ChatID: telego.ChatID{ID: n.config.TelegramChatId},
+        Text:   msgContent,
+        ParseMode: "MarkdownV2",
+      })
       if err != nil {
         log.WithFields(log.Fields{
           "vacancy": vacancy,
@@ -58,6 +64,7 @@ func (n *tg_notifier) Notify(ctx context.Context, vacancies []types.VacancyInfo)
         }).Error("failed to send message to telegram...")
         continue
       }
+      log.Debug("Message sent to telegram: ", msg)
     }
   }
   return nil
@@ -65,24 +72,34 @@ func (n *tg_notifier) Notify(ctx context.Context, vacancies []types.VacancyInfo)
 
 func (n *tg_notifier) WelcomeMessage(ctx context.Context, vacanciesCount int) error {
   msgContent := fmt.Sprintf("Я бот Vacancies Sniffer и я буду присылать тебе уведомления о новых вакансиях с сайта aviasales.ru\n\nСейчас на сайте есть %d вакансий, но я буду следить только за новыми\n\nЕсли ты хочешь посмотреть все вакансии что есть сейчас, жми кнопку", vacanciesCount)
-  bot, err := tgbotapi.NewBotAPI(n.config.TelegramToken)
+  bot, err := telego.NewBot(n.config.TelegramToken, telego.WithDefaultDebugLogger())
   if err != nil {
     // log that we failed to init telegram bot
     log.Fatal(err)
   }
-  bot.Debug = true
-  log.Infof("Authorized on account %s", bot.Self.UserName)
-  msg := tgbotapi.NewMessage(n.config.TelegramChatId, msgContent)
-  msg.ParseMode = tgbotapi.ModeMarkdownV2
+  botName, err := bot.GetMyName(&telego.GetMyNameParams{})
+  if err != nil {
+    log.Fatal(err)
+  }
+  log.Infof("Authorized on account %s", botName.Name)
 
   // add button
-  keyboard := tgbotapi.NewInlineKeyboardMarkup(
-    tgbotapi.NewInlineKeyboardRow(
-      tgbotapi.NewInlineKeyboardButtonURL("Посмотреть вакансии", "https://aviasales.ru/about/vacancies"),
-    ),
-  )
-  msg.ReplyMarkup = keyboard
-
-  _, err = bot.Send(msg)
-  return err
+  msg, err := bot.SendMessage(
+    tu.Message(telego.ChatID{ID: n.config.TelegramChatId}, msgContent).WithReplyMarkup(
+      tu.InlineKeyboard(
+        tu.InlineKeyboardRow(
+          tu.InlineKeyboardButton("Посмотреть вакансии").WithURL("https://aviasales.ru/about/vacancies"),
+          ),
+        ),
+      ),
+    )
+  if err != nil {
+    log.WithFields(log.Fields{
+      "error": err,
+      "chat_id": n.config.TelegramChatId,
+    }).Error("failed to send message to telegram...")
+    return err
+  }
+  log.Debug("Message sent to telegram: ", msg)
+  return nil
 }
