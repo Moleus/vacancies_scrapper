@@ -51,11 +51,7 @@ func (n *tg_notifier) Notify(ctx context.Context, vacancies []types.VacancyInfo)
       }
       log.Infof("Authorized on account %s", botName.Name)
       msgContent := fmt.Sprintf("%s `%s`\n%s %s\nОписание вакансии: %s", vacancy.TeamIcon, vacancy.Name, vacancy.RemoteIcon, vacancy.Team, vacancy.Link)
-      msg, err := bot.SendMessage(&telego.SendMessageParams{
-        ChatID: telego.ChatID{ID: n.config.TelegramChatId},
-        Text:   msgContent,
-        ParseMode: "MarkdownV2",
-      })
+      msg, err := bot.SendMessage(tu.Message(tu.ID(n.config.TelegramChatId), msgContent))
       if err != nil {
         log.WithFields(log.Fields{
           "vacancy": vacancy,
@@ -85,7 +81,7 @@ func (n *tg_notifier) WelcomeMessage(ctx context.Context, vacanciesCount int) er
 
   // add button
   msg, err := bot.SendMessage(
-    tu.Message(telego.ChatID{ID: n.config.TelegramChatId}, msgContent).WithReplyMarkup(
+    tu.Message(tu.ID(n.config.TelegramChatId), msgContent).WithReplyMarkup(
       tu.InlineKeyboard(
         tu.InlineKeyboardRow(
           tu.InlineKeyboardButton("Посмотреть вакансии").WithURL("https://aviasales.ru/about/vacancies"),
